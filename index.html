@@ -1,0 +1,282 @@
+<!doctype html>
+
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kalkulator Kriptografi Klasik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="bg-gray-100 min-h-screen text-gray-800 font-sans">
+    <div class="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8 mt-10">
+      <div
+        class="bg-white rounded-t-xl shadow-lg p-6 border-b-4 border-indigo-600"
+      >
+        <h1 class="text-3xl font-bold text-gray-900 text-center">
+          Kalkulator Kriptografi Klasik
+        </h1>
+        <p class="text-center text-gray-500 mt-2">
+          Vigenere, Affine, Playfair, Hill, & Enigma M3
+        </p>
+      </div>
+
+      <div class="bg-white rounded-b-xl shadow-lg p-6">
+        <!-- Area Notifikasi Error -->
+        <div
+          id="error-alert"
+          class="hidden mb-6 bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded fade-in"
+          role="alert"
+        >
+          <p class="font-bold">Kesalahan Input</p>
+          <p id="error-msg">Pesan error di sini.</p>
+        </div>
+
+        <!--Cipher -->
+        <div class="mb-6 border-b pb-6">
+          <label
+            for="cipher-select"
+            class="block text-sm font-semibold text-gray-700 mb-2"
+            >Pilih Algoritma Cipher</label
+          >
+          <select
+            id="cipher-select"
+            class="w-full sm:w-1/2 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition shadow-sm outline-none bg-gray-50 text-gray-800 font-medium"
+          >
+            <option value="vigenere">Vigenere Cipher</option>
+            <option value="affine">Affine Cipher</option>
+            <option value="playfair">Playfair Cipher</option>
+            <option value="hill">Hill Cipher (2x2)</option>
+            <option value="enigma">Enigma Cipher (M3)</option>
+          </select>
+        </div>
+
+        <!-- Area Setting Kunci (Dinamis) -->
+        <div
+          id="key-settings"
+          class="mb-6 p-5 bg-indigo-50 rounded-lg border border-indigo-100"
+        >
+          <h3 class="text-md font-bold text-indigo-800 mb-4">
+            Pengaturan Kunci
+          </h3>
+
+          <!-- Kunci Vigenere -->
+          <div id="settings-vigenere" class="key-panel">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Kata Kunci (Huruf saja)</label
+            >
+            <input
+              type="text"
+              id="vigenere-key"
+              placeholder="CONTOH"
+              class="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500 outline-none uppercase"
+            />
+          </div>
+
+          <!-- Kunci Affine -->
+          <div id="settings-affine" class="key-panel hidden flex gap-4">
+            <div class="w-1/2">
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Multiplier (a)</label
+              >
+              <input
+                type="number"
+                id="affine-a"
+                placeholder="Harus koprima 26 (mis: 5)"
+                class="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500 outline-none"
+              />
+            </div>
+            <div class="w-1/2">
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Shift (b)</label
+              >
+              <input
+                type="number"
+                id="affine-b"
+                placeholder="Angka bebas (mis: 8)"
+                class="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500 outline-none"
+              />
+            </div>
+          </div>
+
+          <!-- Kunci Playfair -->
+          <div id="settings-playfair" class="key-panel hidden">
+            <label class="block text-sm font-medium text-gray-700 mb-1"
+              >Keyword (Huruf saja)</label
+            >
+            <input
+              type="text"
+              id="playfair-key"
+              placeholder="RAHASIA"
+              class="w-full p-2 border rounded focus:ring-2 focus:ring-indigo-500 outline-none uppercase"
+            />
+          </div>
+
+          <!-- Kunci Hill -->
+          <div id="settings-hill" class="key-panel hidden">
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Matriks Kunci 2x2</label
+            >
+            <div class="matrix-grid bg-white p-3 rounded shadow-sm border">
+              <input
+                type="number"
+                id="hill-00"
+                class="matrix-input border rounded focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50"
+                placeholder="K11"
+              />
+              <input
+                type="number"
+                id="hill-01"
+                class="matrix-input border rounded focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50"
+                placeholder="K12"
+              />
+              <input
+                type="number"
+                id="hill-10"
+                class="matrix-input border rounded focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50"
+                placeholder="K21"
+              />
+              <input
+                type="number"
+                id="hill-11"
+                class="matrix-input border rounded focus:ring-2 focus:ring-indigo-500 outline-none bg-gray-50"
+                placeholder="K22"
+              />
+            </div>
+            <p class="text-xs text-gray-500 mt-2">
+              Pastikan determinan tidak nol dan koprima dengan 26.
+            </p>
+          </div>
+
+          <!-- Kunci Enigma -->
+          <div id="settings-enigma" class="key-panel hidden">
+            <div class="grid grid-cols-3 gap-4 mb-4">
+              <!-- Left Rotor -->
+              <div>
+                <label
+                  class="block text-xs font-bold text-gray-700 mb-1 text-center"
+                  >Rotor Kiri</label
+                >
+                <select
+                  id="enigma-rotor-l"
+                  class="w-full p-2 border rounded text-center text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="I">I</option>
+                  <option value="II">II</option>
+                  <option value="III" selected>III</option>
+                </select>
+                <input
+                  type="text"
+                  id="enigma-pos-l"
+                  maxlength="1"
+                  value="A"
+                  class="w-full mt-2 p-2 border rounded text-center font-bold uppercase outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Pos"
+                />
+              </div>
+              <!-- Middle Rotor -->
+              <div>
+                <label
+                  class="block text-xs font-bold text-gray-700 mb-1 text-center"
+                  >Rotor Tengah</label
+                >
+                <select
+                  id="enigma-rotor-m"
+                  class="w-full p-2 border rounded text-center text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="I">I</option>
+                  <option value="II" selected>II</option>
+                  <option value="III">III</option>
+                </select>
+                <input
+                  type="text"
+                  id="enigma-pos-m"
+                  maxlength="1"
+                  value="A"
+                  class="w-full mt-2 p-2 border rounded text-center font-bold uppercase outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Pos"
+                />
+              </div>
+              <!-- Right Rotor -->
+              <div>
+                <label
+                  class="block text-xs font-bold text-gray-700 mb-1 text-center"
+                  >Rotor Kanan</label
+                >
+                <select
+                  id="enigma-rotor-r"
+                  class="w-full p-2 border rounded text-center text-sm outline-none focus:ring-2 focus:ring-indigo-500"
+                >
+                  <option value="I" selected>I</option>
+                  <option value="II">II</option>
+                  <option value="III">III</option>
+                </select>
+                <input
+                  type="text"
+                  id="enigma-pos-r"
+                  maxlength="1"
+                  value="A"
+                  class="w-full mt-2 p-2 border rounded text-center font-bold uppercase outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Pos"
+                />
+              </div>
+            </div>
+            <p class="text-xs text-gray-500 text-center">
+              Reflektor B (Fix). Masukkan posisi awal rotor berupa huruf A-Z.
+            </p>
+          </div>
+        </div>
+
+        <!-- Teks Input & Output -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Input Box -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2"
+              >Teks Input</label
+            >
+            <textarea
+              id="input-text"
+              rows="6"
+              class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none resize-none shadow-sm uppercase font-mono"
+              placeholder="Masukkan Plaintext atau Ciphertext di sini..."
+            ></textarea>
+          </div>
+
+          <!-- Output Box -->
+          <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2"
+              >Hasil (Output)</label
+            >
+            <textarea
+              id="output-text"
+              rows="6"
+              class="w-full p-3 border border-gray-300 bg-gray-50 rounded-lg outline-none resize-none shadow-sm font-mono text-indigo-900 font-bold"
+              placeholder="Hasil akan muncul di sini..."
+              readonly
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Tombol Aksi -->
+        <div class="mt-6 flex justify-center gap-4">
+          <button
+            id="btn-encrypt"
+            class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg shadow transition transform hover:scale-105"
+          >
+            Enkripsi
+          </button>
+          <button
+            id="btn-decrypt"
+            class="px-6 py-3 bg-teal-600 hover:bg-teal-700 text-white font-bold rounded-lg shadow transition transform hover:scale-105"
+          >
+            Dekripsi
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Memanggil file JavaScript eksternal lokal -->
+    <script src="script.js"></script>
+  </body>
+</html>

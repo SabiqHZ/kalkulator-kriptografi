@@ -1,0 +1,30 @@
+/* Animasi Transisi untuk pesan error */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Grid khusus untuk Matriks Hill Cipher */
+.matrix-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  width: max-content;
+}
+
+.matrix-input {
+  width: 3rem;
+  height: 3rem;
+  text-align: center;
+  font-weight: bold;
+}
