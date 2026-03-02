@@ -1,6 +1,3 @@
-// ==========================================
-// MODUL 1: FUNGSI MATEMATIKA (MathUtils)
-// ==========================================
 const MathUtils = {
   // Modulo yang valid untuk angka negatif
   mod: function (n, m) {
@@ -22,10 +19,6 @@ const MathUtils = {
   },
 };
 
-// ==========================================
-// MODUL 2: ALGORITMA CIPHER (Ciphers)
-// Mengisolasi logika enkripsi dari komponen UI
-// ==========================================
 const Ciphers = {
   // --- A. Vigenere Cipher ---
   vigenere: function (text, isDecrypt, key) {
